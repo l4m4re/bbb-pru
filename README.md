@@ -2,19 +2,6 @@
 
 This is an example program to figure out how to program the PRU units in the Beagle Bone Black.
 
-l4m4re: I have adjusted the adc example to fit my needs, namely to sample two
-channels as fast as possible. With the current code, I get a sampling rate of
-about 1542 kS/s (or 771 kS/s per channel), which is pretty close to the
-theoretical maximum of about 1.74 MS/si (*) in continous mode. I guess the
-multiplexing of the analog inputs puts in an additional limit. 
-
-(*) See: [stack
-overflow](https://stackoverflow.com/questions/31076486/frequency-sampling-limit-for-beaglebone-adc)
-
-"The ADC subsystem in the AM335x CPU is clocked at 24 MHz and needs 15 cycles
-for a sample (14 in continous mode). This leads to a maximum sample rate of
-
-<end l4m4re>
 
 
 **DEPRECATION NOTICE:** The code in [this repo](https://github.com/outer-space-sounds/beaglebone-pruio/) is more up-to-date and probably more useful.
@@ -32,6 +19,20 @@ Look at the app-assembler example.
 ## Writing PRU C code
 
 Look at the app-c example.
+
+## ADC example
+I have adjusted the adc example to fit my needs, namely to sample two
+channels as fast as possible. With the current code, I get a sampling rate of
+about 1542 kS/s (or 771 kS/s per channel), which is pretty close to the
+theoretical maximum of about 1.74 MS/si in continous mode. I guess the
+multiplexing of the analog inputs puts in an additional limit. 
+
+See: [stack
+overflow](https://stackoverflow.com/questions/31076486/frequency-sampling-limit-for-beaglebone-adc)
+
+"The ADC subsystem in the AM335x CPU is clocked at 24 MHz and needs 15 cycles
+for a sample (14 in continous mode). This leads to a maximum sample rate of
+1.6 (1.74) MSamples/s. See SRM, chapter 12 for details."
 
 ## Links:
 
