@@ -7,7 +7,7 @@
 #include <sys/time.h>
 #include <fcntl.h>
 #include <sys/mman.h>
-#include <sndfile.h>
+//#include <sndfile.h>
 
 #include <prussdrv.h>
 #include <pruss_intc_mapping.h>
@@ -25,8 +25,8 @@
 unsigned int* shared_ram = NULL;
 pthread_t thread;
 int finish = 0;
-SNDFILE* sound_file;
-unsigned int buffer[0xFFFFFF]; // 16MB
+//SNDFILE* sound_file;
+//unsigned int buffer[0x2FFFFFF]; // 16MB
 unsigned int buffer_count=0;
 
 
@@ -122,7 +122,7 @@ void* threaded_function(void* param){
       buffer_position = shared_ram[0];
 
       // Write samples to buffer
-      memcpy(&(buffer[buffer_count]), &(shared_ram[buffer_position]), buffer_size*sizeof(unsigned int));
+//      memcpy(&(buffer[buffer_count]), &(shared_ram[buffer_position]), buffer_size*sizeof(unsigned int));
       buffer_count += buffer_size;
       /* int *p = (int *)(&shared_ram[1]); */
       /* sf_write_int(sound_file, &(shared_ram[1]), buffer_size); */
@@ -133,7 +133,7 @@ void* threaded_function(void* param){
          /* printf("sample: %f \n", sample); */
       /* } */
 
-      if(count%1000 == 0){
+      if(count%10000 == 0){
          // Print info
 //         printf("Pos: %u\n", buffer_position);
 //         printf("Buffer size: %u\n", buffer_size);
@@ -182,6 +182,7 @@ void stop_thread(){
 }
 
 void open_sound_file(){
+/*
    SF_INFO info;
    info.samplerate = 50000;
    info.channels = 2;
@@ -190,17 +191,18 @@ void open_sound_file(){
       printf("Invalid soundfile format\n");
       exit(1);
    }
-
    if(! (sound_file = sf_open("./out.wav", SFM_WRITE, &info)) ){
       printf("Could not open soundfile\n");
       exit(1);
    }
+*/
 }
 
 void close_sound_file(){
-   unsigned int i;
-   float samples[2];
+//   unsigned int i;
+//   float samples[2];
    printf("Final buffer_count: %u \n", buffer_count);
+/*
    for(i=0; i<buffer_count; i=i+6){
       samples[0] = ( (float)buffer[i]/(float)0x7ff ) - 1;
       samples[1] = ( (float)buffer[i+1]/(float)0x7ff ) - 1;
@@ -210,6 +212,7 @@ void close_sound_file(){
       }
    }
    sf_close(sound_file);
+*/
 }
 
 unsigned long timeStamp()
@@ -233,15 +236,16 @@ int main(int argc, const char *argv[])
     // Load and run binary into pru0
     init_pru_program();
 
-    unsigned long startTime=timeStamp();
 
     open_sound_file();
 
     /* sleep(1); */
     start_thread();
 
+    unsigned long startTime=timeStamp();
+
     /* while(!finish){ */
-    sleep(2);
+    sleep(1200);
     /* } */
 
     prussdrv_pru_disable(PRU_NUM);
@@ -255,10 +259,10 @@ int main(int argc, const char *argv[])
     int i; 
     unsigned long sum = 0; 
     for(i=0; i<times_count; i++){ 
-    sum += times[i]; 
+        sum += times[i]; 
     } 
     float avg = (float)sum / (float)times_count; 
-    printf("Freq: %f \n", 128.0*1000000.0/avg); 
+    printf("Freq: %f \n kS/s", 128.0*1000.0/avg); 
 
 
     unsigned int nsamples = buffer_count;
