@@ -32,6 +32,9 @@ unsigned int buffer_count=0;
 
 /////////////////////////////////////////////////////////////////////
 
+//#define OVERLAY "PRU-DTO"
+#define OVERLAY "PRUSSDRV"
+
 void load_device_tree_overlay(){
    // Check if device tree overlay is loaded, load if needed.
    int device_tree_overlay_loaded = 0; 
@@ -43,7 +46,7 @@ void load_device_tree_overlay(){
    }
    char line[256];
    while(fgets(line, 256, f) != NULL){
-      if(strstr(line, "PRU-DTO") != NULL){
+      if(strstr(line, OVERLAY ) != NULL){
          device_tree_overlay_loaded = 1; 
       }
    }
@@ -55,7 +58,7 @@ void load_device_tree_overlay(){
          printf("Initialisation failed (fopen)");
          exit(1);
       }
-      fprintf(f, "PRU-DTO");
+      fprintf(f, OVERLAY );
       fclose(f);
       usleep(100000);
    }
@@ -80,19 +83,22 @@ void signal_handler(int signal){
    finish = 1;
 }
 
-/* unsigned long times[1000]; */
-/* unsigned int times_count=0; */
+unsigned long times[1000]; 
+unsigned int times_count=0; 
+
 void* threaded_function(void* param){
    printf("Started thread\n");
-   /* struct timeval time; */
-   /* unsigned long t1=0; */
-   /* unsigned long t2=0; */
+
+   struct timeval time;
+   unsigned long t1=0;
+   unsigned long t2=0;
    unsigned int buffer_size=0;
    unsigned int buffer_position;
-   /* unsigned int first=1; */
-   /* times_count=0; */
+   unsigned int first=1;
+   times_count=0; 
    /* int i; */
    /* float sample; */
+
    int count = 0;
    while(1){
       // Wait for interrupt from PRU
@@ -100,14 +106,14 @@ void* threaded_function(void* param){
       prussdrv_pru_clear_event(PRU_EVTOUT_0, PRU0_ARM_INTERRUPT);
 
       // Store time so we can average later
-      /* gettimeofday(&time,NULL); */
-      /* t2 = t1; */
-      /* t1 = time.tv_usec + time.tv_sec*1000000; */
-      /* if(times_count<1000 && !first){ */
-      /*    times[times_count]=(t1-t2); */
-      /*    times_count++; */
-      /* } */
-      /* first=0; */
+      gettimeofday(&time,NULL); 
+      t2 = t1; 
+      t1 = time.tv_usec + time.tv_sec*1000000; 
+      if(times_count<1000 && !first){ 
+         times[times_count]=(t1-t2); 
+         times_count++; 
+      } 
+      first=0; 
 
       // Read number of samples available
       buffer_size = shared_ram[1];
@@ -127,13 +133,22 @@ void* threaded_function(void* param){
          /* printf("sample: %f \n", sample); */
       /* } */
 
-      if(count%20 == 0){
+      if(count%1000 == 0){
          // Print info
-         /* printf("Pos: %u\n", buffer_position); */
-         /* printf("Buffer size: %u\n", buffer_size); */
-         printf("Values: %u %u %u %u %u %u\n", shared_ram[buffer_position], shared_ram[buffer_position+1], shared_ram[buffer_position + 2], shared_ram[buffer_position+3], shared_ram[buffer_position+4], shared_ram[buffer_position+5]);
-         printf("fifo0 count: %u \n", shared_ram[3]);
+//         printf("Pos: %u\n", buffer_position);
+//         printf("Buffer size: %u\n", buffer_size);
+//         printf("Values: %u %u %u %u %u %u\n", shared_ram[buffer_position], shared_ram[buffer_position+1], shared_ram[buffer_position + 2], shared_ram[buffer_position+3], shared_ram[buffer_position+4], shared_ram[buffer_position+5]);
+//
+         unsigned int val1 = shared_ram[buffer_position];
+         val1 &= 0xFFF;
+         unsigned int val2 = shared_ram[buffer_position+1];
+         val2 &= 0xFFF;
+         
+         printf("Values: %u %u\n", val1, val2);
+         printf("Buffer addr: %u \n", shared_ram[0]);
+         printf("buffer  cnt: %u \n", shared_ram[1]);
       }
+    
       count++;
    }
 
@@ -142,6 +157,7 @@ void* threaded_function(void* param){
 
 void start_thread(){
    // TODO: set real time priority to this thread
+
    pthread_attr_t attr;
    if(pthread_attr_init(&attr)){
       printf("Cannot start a new thread.\n");
@@ -155,6 +171,7 @@ void start_thread(){
       printf("Cannot start a new thread.");
       exit(1);
    }
+
 }
 
 void stop_thread(){
@@ -167,7 +184,7 @@ void stop_thread(){
 void open_sound_file(){
    SF_INFO info;
    info.samplerate = 50000;
-   info.channels = 6;
+   info.channels = 2;
    info.format = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
    if(!sf_format_check(&info)){
       printf("Invalid soundfile format\n");
@@ -182,16 +199,12 @@ void open_sound_file(){
 
 void close_sound_file(){
    unsigned int i;
-   float samples[6];
+   float samples[2];
    printf("Final buffer_count: %u \n", buffer_count);
    for(i=0; i<buffer_count; i=i+6){
       samples[0] = ( (float)buffer[i]/(float)0x7ff ) - 1;
       samples[1] = ( (float)buffer[i+1]/(float)0x7ff ) - 1;
-      samples[2] = ( (float)buffer[i+2]/(float)0x7ff ) - 1;
-      samples[3] = ( (float)buffer[i+3]/(float)0x7ff ) - 1;
-      samples[4] = ( (float)buffer[i+4]/(float)0x7ff ) - 1;
-      samples[5] = ( (float)buffer[i+5]/(float)0x7ff ) - 1;
-      if(6!=sf_write_float(sound_file, samples, 6)){
+      if(2!=sf_write_float(sound_file, samples, 2)){
          printf("%s \n", sf_strerror(sound_file));
          break;
       }
@@ -199,42 +212,64 @@ void close_sound_file(){
    sf_close(sound_file);
 }
 
-int main(int argc, const char *argv[]){
-   printf("\n\n");
+unsigned long timeStamp()
+{
+    struct timeval tv;
+    gettimeofday(&tv,NULL);
+    return 1000000 * tv.tv_sec + tv.tv_usec;
+}
 
-   // Listen to SIGINT signals (program termination)
-   signal(SIGINT, signal_handler);
+int main(int argc, const char *argv[])
+{
+    printf("\n\n");
+
+    // Listen to SIGINT signals (program termination)
+    signal(SIGINT, signal_handler);
 
 
-   // Load device tree overlay to enable PRU hardware.
-   load_device_tree_overlay();
+    // Load device tree overlay to enable PRU hardware.
+    load_device_tree_overlay();
 
-   // Load and run binary into pru0
-   init_pru_program();
+    // Load and run binary into pru0
+    init_pru_program();
 
-   open_sound_file();
+    unsigned long startTime=timeStamp();
 
-   /* sleep(1); */
-   start_thread();
+    open_sound_file();
 
-   /* while(!finish){ */
-   sleep(5);
-   /* } */
+    /* sleep(1); */
+    start_thread();
 
-   prussdrv_pru_disable(PRU_NUM);
-   prussdrv_exit ();
-   stop_thread();
+    /* while(!finish){ */
+    sleep(2);
+    /* } */
 
-   close_sound_file();
+    prussdrv_pru_disable(PRU_NUM);
+    stop_thread();
 
-   // Calculate sample rate
-   /* int i; */
-   /* unsigned long sum = 0; */
-   /* for(i=0; i<times_count; i++){ */
-   /*    sum += times[i]; */
-   /* } */
-   /* float avg = (float)sum / (float)times_count; */
-   /* printf("Freq: %f \n", 128.0*1000000.0/avg); */
+    unsigned long stopTime=timeStamp();
 
-   return 0;
+    close_sound_file();
+
+    // Calculate sample rate
+    int i; 
+    unsigned long sum = 0; 
+    for(i=0; i<times_count; i++){ 
+    sum += times[i]; 
+    } 
+    float avg = (float)sum / (float)times_count; 
+    printf("Freq: %f \n", 128.0*1000000.0/avg); 
+
+
+    unsigned int nsamples = buffer_count;
+
+    double elapsed = (stopTime-startTime)/1e6;
+    printf("Sampling took %f sec.\n", elapsed);
+
+    double rate = nsamples/(1000.0 * elapsed); // in kS/s
+    printf("Sampling rate %f kS/s (%f kS/s per chan).\n", rate, rate/2);
+
+    prussdrv_exit();
+
+    return 0;
 }
