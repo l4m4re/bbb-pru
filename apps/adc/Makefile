@@ -33,3 +33,5 @@ clean:
 	-rm *.bin
 	-rm *.o
 	-rm host
+	-rm out.wav
+	 
