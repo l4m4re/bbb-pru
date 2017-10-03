@@ -1,0 +1,11 @@
+
+
+Started thread
+Values: 0 2016
+Buffer addr: 100 
+buffer  cnt: 4096 
+Stopped thread
+Final buffer_count: 15998976 
+Sampling took 10.000161 sec.
+Sampling rate 1599.871842 kS/s (799.935921 kS/s per chan).
+Freq: 800.085306 kS/s

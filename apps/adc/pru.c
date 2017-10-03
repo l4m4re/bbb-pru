@@ -1,5 +1,8 @@
 /////////////////////////////////////////////////////////////////////
 // Original source: https://github.com/rvega/bbb-pru
+//
+
+#include "defines.h"
 
 /////////////////////////////////////////////////////////////////////
 // UTIL
@@ -17,8 +20,6 @@ volatile register unsigned int __R31;
 volatile unsigned int* shared_ram;
 volatile unsigned int* buffer;
 
-#define block_size 128
-#define channels 2
 
 int main(int argc, const char *argv[])
 {
@@ -35,6 +36,8 @@ int main(int argc, const char *argv[])
                                    // arm cpu can read one of them while we 
                                    // fill the other one.
     unsigned int buffer_start = which_buffer*(block_size+1)*channels;
+
+    unsigned int interrupt_count  = 0; // Enables host to check for missed interrupts.
 
     init_adc();
 
@@ -70,6 +73,7 @@ int main(int argc, const char *argv[])
             // address of buffer in position 1 and IRQ
             shared_ram[0] = 100 + buffer_start;
             shared_ram[1] = buffer_count;
+            shared_ram[2] = interrupt_count++;
 /*
             fifo0_count = HWREG(0x44e0d0e4); 
             fifo1_count = HWREG(0x44e0d0f0);

@@ -12,6 +12,8 @@
 #include <prussdrv.h>
 #include <pruss_intc_mapping.h>
 
+#include "defines.h"
+
 #define PRU_NUM 0
 
 #ifndef START_ADDR
@@ -95,7 +97,12 @@ void* threaded_function(void* param){
    unsigned int buffer_size=0;
    unsigned int buffer_position;
    unsigned int first=1;
+
+   unsigned int interrupt_count=0;
+   unsigned int last_interrupt_count=0;
    times_count=0; 
+
+
    /* int i; */
    /* float sample; */
 
@@ -121,6 +128,18 @@ void* threaded_function(void* param){
       // Read position in RAM
       buffer_position = shared_ram[0];
 
+      interrupt_count = shared_ram[2];
+
+      if( buffer_count && last_interrupt_count && interrupt_count > last_interrupt_count + 1)
+      {
+         unsigned int ints_missed = interrupt_count - (last_interrupt_count+1);
+
+         printf( "Missed %u interrupts.\n", ints_missed);
+      }
+
+      last_interrupt_count = interrupt_count;
+
+
       // Write samples to buffer
 //      memcpy(&(buffer[buffer_count]), &(shared_ram[buffer_position]), buffer_size*sizeof(unsigned int));
       buffer_count += buffer_size;
@@ -133,7 +152,7 @@ void* threaded_function(void* param){
          /* printf("sample: %f \n", sample); */
       /* } */
 
-      if(count%10000 == 0){
+      if(count%5000 == 0){
          // Print info
 //         printf("Pos: %u\n", buffer_position);
 //         printf("Buffer size: %u\n", buffer_size);
@@ -156,22 +175,29 @@ void* threaded_function(void* param){
 }
 
 void start_thread(){
-   // TODO: set real time priority to this thread
+    //set attributes
+    pthread_attr_t attr1;
+    struct sched_param parm1;
 
-   pthread_attr_t attr;
-   if(pthread_attr_init(&attr)){
-      printf("Cannot start a new thread.\n");
-      exit(1);
-   }
-   if(pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED)){
-      printf("Cannot start a new thread.");
-      exit(1);
-   }
-   if(pthread_create(&thread, &attr, &threaded_function, NULL)){
-      printf("Cannot start a new thread.");
-      exit(1);
-   }
+    if(pthread_attr_init(&attr1)){
+     printf("Cannot start a new thread.\n");
+     exit(1);
+    }
 
+    pthread_attr_getschedparam(&attr1, &parm1);
+    parm1.sched_priority = sched_get_priority_max(SCHED_FIFO);
+    pthread_attr_setschedpolicy(&attr1, SCHED_FIFO);
+    pthread_attr_setschedparam(&attr1, &parm1);
+
+    if(pthread_create(&thread, &attr1, &threaded_function, NULL)){
+        printf("Cannot start a new thread.\n");
+        exit(1);
+    }
+
+    if( pthread_setschedparam(thread, SCHED_FIFO, &parm1) ){
+        printf("Cannot set thread priority.\n");
+        exit(1);
+    }
 }
 
 void stop_thread(){
@@ -245,15 +271,23 @@ int main(int argc, const char *argv[])
     unsigned long startTime=timeStamp();
 
     /* while(!finish){ */
-    sleep(1200);
+    sleep(10);
     /* } */
+
+    unsigned long stopTime=timeStamp();
 
     prussdrv_pru_disable(PRU_NUM);
     stop_thread();
 
-    unsigned long stopTime=timeStamp();
-
     close_sound_file();
+
+    double elapsed = (stopTime-startTime)/1e6;
+    printf("Sampling took %f sec.\n", elapsed);
+    unsigned int nsamples = buffer_count;
+
+    double rate = nsamples/(1000.0 * elapsed); // in kS/s
+    printf("Sampling rate %f kS/s (%f kS/s per chan).\n", rate, rate/2);
+
 
     // Calculate sample rate
     int i; 
@@ -262,16 +296,7 @@ int main(int argc, const char *argv[])
         sum += times[i]; 
     } 
     float avg = (float)sum / (float)times_count; 
-    printf("Freq: %f \n kS/s", 128.0*1000.0/avg); 
-
-
-    unsigned int nsamples = buffer_count;
-
-    double elapsed = (stopTime-startTime)/1e6;
-    printf("Sampling took %f sec.\n", elapsed);
-
-    double rate = nsamples/(1000.0 * elapsed); // in kS/s
-    printf("Sampling rate %f kS/s (%f kS/s per chan).\n", rate, rate/2);
+    printf("Freq: %f kS/s\n", block_size*1000.0/avg); 
 
     prussdrv_exit();
 
