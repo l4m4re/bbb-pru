@@ -1,4 +1,4 @@
-##BBB-PRU
+# BBB-PRU
 
 These are some example programs to figure out how to program the PRU units in the Beagle Bone (Black/Green).
 
