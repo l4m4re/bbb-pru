@@ -1,0 +1,697 @@
+/* Beaglebone Pru IO 
+ * 
+ * Copyright (C) 2015 Rafael Vega <rvega@elsoftwarehamuerto.org> 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+/dts-v1/;
+/plugin/;
+
+/{
+   compatible = "ti,beaglebone", "ti,beaglebone-black";
+   part-number = "PRUIO-DTO";
+   version = "00A0";
+   exclusive-use =
+      // "pruss",
+      "pru0",
+
+      "P8_07", 
+      "P8_08", 
+      "P8_09", 
+      "P8_10", 
+      "P8_11", 
+      "P8_12", 
+      "P8_13", 
+      "P8_14", 
+      "P8_15", 
+      "P8_16", 
+      "P8_17", 
+      "P8_18", 
+      "P8_19", 
+      "P8_26", 
+      "P8_27", // hdmi, mux_control
+      "P8_28", // hdmi, mux_control
+      "P8_29", // hdmi, mux_control
+      "P8_30", // hdmi
+      "P8_31", // hdmi
+      "P8_32", // hdmi
+      "P8_33", // hdmi
+      "P8_34", // hdmi
+      "P8_35", // hdmi
+      "P8_36", // hdmi
+      "P8_37", // hdmi
+      "P8_38", // hdmi
+      "P8_39", // hdmi
+      "P8_40", // hdmi
+      "P8_41", // hdmi
+      "P8_42", // hdmi
+      "P8_43", // hdmi
+      "P8_44", // hdmi
+      "P8_45", // hdmi
+      "P8_46", // hdmi
+
+      /* "P9.11", */  // UART 1
+      "P9.12",
+      /* "P9.13", */ // UART 1
+      "P9.14",
+      "P9.15",
+      "P9.16",
+      // "P9.17", // i2c1
+      // "P9.18", // i2c1
+      "P9.21",
+      "P9.22",
+      "P9.23",
+      "P9.24",
+      "P9.26",
+      "P9.27",
+      "P9.30",
+      "P9.41",
+      "P9.41.1",
+      "P9.42",
+      "P9.42.1";
+
+   fragment@0{
+      target = <&pruss>;
+      __overlay__ {
+         status = "okay";
+      };
+   };
+
+   // This section specifies the the pairs of gpio config register 
+   // addresses (offsets) and values that we'll allow to set in runtime.
+   //
+   // Inputs will always have pullup resistors enabled (0x37) and 
+   // outputs never have a pull resistor (0x0F)
+   fragment@1{
+      target = <&am33xx_pinmux>;
+      __overlay__ {
+         P8_07_i: P8_07_in{pinctrl-single,pins = <0x090 0x37>;};
+         P8_07_o: P8_07_out{pinctrl-single,pins = <0x090 0x0F>;};
+   
+         P8_08_i: P8_08_in{pinctrl-single,pins = <0x094 0x37>;};
+         P8_08_o: P8_08_out{pinctrl-single,pins = <0x094 0x0F>;};
+
+         P8_09_i: P8_09_in{pinctrl-single,pins = <0x09C 0x37>;};
+         P8_09_o: P8_09_out{pinctrl-single,pins = <0x09C 0x0F>;};
+
+         P8_10_i: P8_10_in{pinctrl-single,pins = <0x098 0x37>;};
+         P8_10_o: P8_10_out{pinctrl-single,pins = <0x098 0x0F>;};
+
+         P8_11_i: P8_11_in{pinctrl-single,pins = <0x034 0x37>;};
+         P8_11_o: P8_11_out{pinctrl-single,pins = <0x034 0x0F>;};
+
+         P8_12_i: P8_12_in{pinctrl-single,pins = <0x030 0x37>;};
+         P8_12_o: P8_12_out{pinctrl-single,pins = <0x030 0x0F>;};
+
+         P8_13_i: P8_13_in{pinctrl-single,pins = <0x024 0x37>;};
+         P8_13_o: P8_13_out{pinctrl-single,pins = <0x024 0x0F>;};
+
+         P8_14_i: P8_14_in{pinctrl-single,pins = <0x028 0x37>;};
+         P8_14_o: P8_14_out{pinctrl-single,pins = <0x028 0x0F>;};
+
+         P8_15_i: P8_15_in{pinctrl-single,pins = <0x03C 0x37>;};
+         P8_15_o: P8_15_out{pinctrl-single,pins = <0x03C 0x0F>;};
+
+         P8_16_i: P8_16_in{pinctrl-single,pins = <0x038 0x37>;};
+         P8_16_o: P8_16_out{pinctrl-single,pins = <0x038 0x0F>;};
+
+         P8_17_i: P8_17_in{pinctrl-single,pins = <0x02C 0x37>;};
+         P8_17_o: P8_17_out{pinctrl-single,pins = <0x02C 0x0F>;};
+
+         P8_18_i: P8_18_in{pinctrl-single,pins = <0x08C 0x37>;};
+         P8_18_o: P8_18_out{pinctrl-single,pins = <0x08C 0x0F>;};
+
+         P8_19_i: P8_19_in{pinctrl-single,pins = <0x020 0x37>;};
+         P8_19_o: P8_19_out{pinctrl-single,pins = <0x020 0x0F>;};
+
+         P8_26_i: P8_26_in{pinctrl-single,pins = <0x07C 0x37>;};
+         P8_26_o: P8_26_out{pinctrl-single,pins = <0x07C 0x0F>;};
+
+         // HDMI:
+         P8_27_i: P8_27_in{pinctrl-single,pins = <0x0E0 0x37>;};
+         P8_27_o: P8_27_out{pinctrl-single,pins = <0x0E0 0x0F>;};
+
+         P8_28_i: P8_28_in{pinctrl-single,pins = <0x0E8 0x37>;};
+         P8_28_o: P8_28_out{pinctrl-single,pins = <0x0E8 0x0F>;};
+
+         P8_29_i: P8_29_in{pinctrl-single,pins = <0x0E4 0x37>;};
+         P8_29_o: P8_29_out{pinctrl-single,pins = <0x0E4 0x0F>;};
+
+         P8_30_i: P8_30_in{pinctrl-single,pins = <0x0EC 0x37>;};
+         P8_30_o: P8_30_out{pinctrl-single,pins = <0x0EC 0x0F>;};
+
+         P8_31_i: P8_31_in{pinctrl-single,pins = <0x0D8 0x37>;};
+         P8_31_o: P8_31_out{pinctrl-single,pins = <0x0D8 0x0F>;};
+
+         P8_32_i: P8_32_in{pinctrl-single,pins = <0x0DC 0x37>;};
+         P8_32_o: P8_32_out{pinctrl-single,pins = <0x0DC 0x0F>;};
+
+         P8_33_i: P8_33_in{pinctrl-single,pins = <0x0D4 0x37>;};
+         P8_33_o: P8_33_out{pinctrl-single,pins = <0x0D4 0x0F>;};
+
+         P8_34_i: P8_34_in{pinctrl-single,pins = <0x0CC 0x37>;};
+         P8_34_o: P8_34_out{pinctrl-single,pins = <0x0CC 0x0F>;};
+
+         P8_35_i: P8_35_in{pinctrl-single,pins = <0x0D0 0x37>;};
+         P8_35_o: P8_35_out{pinctrl-single,pins = <0x0D0 0x0F>;};
+
+         P8_36_i: P8_36_in{pinctrl-single,pins = <0x0C8 0x37>;};
+         P8_36_o: P8_36_out{pinctrl-single,pins = <0x0C8 0x0F>;};
+
+         P8_37_i: P8_37_in{pinctrl-single,pins = <0x0C0 0x37>;};
+         P8_37_o: P8_37_out{pinctrl-single,pins = <0x0C0 0x0F>;};
+
+         P8_38_i: P8_38_in{pinctrl-single,pins = <0x0C4 0x37>;};
+         P8_38_o: P8_38_out{pinctrl-single,pins = <0x0C4 0x0F>;};
+
+         P8_39_i: P8_39_in{pinctrl-single,pins = <0x0B8 0x37>;};
+         P8_39_o: P8_39_out{pinctrl-single,pins = <0x0B8 0x0F>;};
+
+         P8_40_i: P8_40_in{pinctrl-single,pins = <0x0BC 0x37>;};
+         P8_40_o: P8_40_out{pinctrl-single,pins = <0x0BC 0x0F>;};
+
+         P8_41_i: P8_41_in{pinctrl-single,pins = <0x0B0 0x37>;};
+         P8_41_o: P8_41_out{pinctrl-single,pins = <0x0B0 0x0F>;};
+
+         P8_42_i: P8_42_in{pinctrl-single,pins = <0x0B4 0x37>;};
+         P8_42_o: P8_42_out{pinctrl-single,pins = <0x0B4 0x0F>;};
+
+         P8_43_i: P8_43_in{pinctrl-single,pins = <0x0A8 0x37>;};
+         P8_43_o: P8_43_out{pinctrl-single,pins = <0x0A8 0x0F>;};
+
+         P8_44_i: P8_44_in{pinctrl-single,pins = <0x0AC 0x37>;};
+         P8_44_o: P8_44_out{pinctrl-single,pins = <0x0AC 0x0F>;};
+
+         P8_45_i: P8_45_in{pinctrl-single,pins = <0x0A0 0x37>;};
+         P8_45_o: P8_45_out{pinctrl-single,pins = <0x0A0 0x0F>;};
+
+         P8_46_i: P8_46_in{pinctrl-single,pins = <0x0A4 0x37>;};
+         P8_46_o: P8_46_out{pinctrl-single,pins = <0x0A4 0x0F>;};
+
+
+         /* P9_11_i: P9_11_in{pinctrl-single,pins = <0x070 0x37>;}; */
+         /* P9_11_o: P9_11_out{pinctrl-single,pins = <0x070 0x0F>;}; */
+
+         P9_12_i: P9_12_in{pinctrl-single,pins = <0x078 0x37>;};
+         P9_12_o: P9_12_out{pinctrl-single,pins = <0x078 0x0F>;};
+
+         /* P9_13_i: P9_13_in{pinctrl-single,pins = <0x074 0x37>;}; */
+         /* P9_13_o: P9_13_out{pinctrl-single,pins = <0x074 0x0F>;}; */
+
+         P9_14_i: P9_14_in{pinctrl-single,pins = <0x048 0x37>;};
+         P9_14_o: P9_14_out{pinctrl-single,pins = <0x048 0x0F>;};
+
+         P9_15_i: P9_15_in{pinctrl-single,pins = <0x040 0x37>;};
+         P9_15_o: P9_15_out{pinctrl-single,pins = <0x040 0x0F>;};
+
+         P9_16_i: P9_16_in{pinctrl-single,pins = <0x04C 0x37>;};
+         P9_16_o: P9_16_out{pinctrl-single,pins = <0x04C 0x0F>;};
+
+         // P9_17_i: P9_17_in{pinctrl-single,pins = <0x15C 0x37>;};
+         // P9_17_o: P9_17_out{pinctrl-single,pins = <0x15C 0x0F>;};
+
+         // P9_18_i: P9_18_in{pinctrl-single,pins = <0x158 0x37>;};
+         // P9_18_o: P9_18_out{pinctrl-single,pins = <0x158 0x0F>;};
+
+         P9_21_i: P9_21_in{pinctrl-single,pins = <0x154 0x37>;};
+         P9_21_o: P9_21_out{pinctrl-single,pins = <0x154 0x0F>;};
+
+         P9_22_i: P9_22_in{pinctrl-single,pins = <0x150 0x37>;};
+         P9_22_o: P9_22_out{pinctrl-single,pins = <0x150 0x0F>;};
+
+         P9_23_i: P9_23_in{pinctrl-single,pins = <0x044 0x37>;};
+         P9_23_o: P9_23_out{pinctrl-single,pins = <0x044 0x0F>;};
+
+         P9_24_i: P9_24_in{pinctrl-single,pins = <0x184 0x37>;};
+         P9_24_o: P9_24_out{pinctrl-single,pins = <0x184 0x0F>;};
+
+         P9_26_i: P9_26_in{pinctrl-single,pins = <0x180 0x37>;};
+         P9_26_o: P9_26_out{pinctrl-single,pins = <0x180 0x0F>;};
+
+         P9_27_i: P9_27_in{pinctrl-single,pins = <0x1A4 0x37>;};
+         P9_27_o: P9_27_out{pinctrl-single,pins = <0x1A4 0x0F>;};
+
+         P9_30_i: P9_30_in{pinctrl-single,pins = <0x198 0x37>;};
+         P9_30_o: P9_30_out{pinctrl-single,pins = <0x198 0x0F>;};
+
+         P9_41A_i: P9_41A_in{pinctrl-single,pins = <0x1B4 0x37>;};
+         P9_41A_o: P9_41A_out{pinctrl-single,pins = <0x1B4 0x0F  0x1A8 0x37>;};
+
+         P9_41B_i: P9_41B_in{pinctrl-single,pins = <0x1A8 0x37>;};
+         P9_41B_o: P9_41B_out{pinctrl-single,pins = <0x1A8 0x0F  0x1B4 0x37>;};
+
+         P9_42A_i: P9_42A_in{pinctrl-single,pins = <0x164 0x37>;};
+         P9_42A_o: P9_42A_out{pinctrl-single,pins = <0x164 0x0F  0x1A0 0x37>;};
+
+         P9_42B_i: P9_42B_in{pinctrl-single,pins = <0x1A0 0x37>;};
+         P9_42B_o: P9_42B_out{pinctrl-single,pins = <0x1A0 0x0F  0x164 0x37>;};
+      };
+   };
+
+   // This section names the possible configurations for each pin and the
+   // directories that will be created in /sys/devices/ocp.*
+   fragment@2{
+      target = <&ocp>;
+      __overlay__ {
+
+         P8_07_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_07_i>;
+            pinctrl-1 = <&P8_07_o>;
+         };
+
+         P8_08_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_08_i>;
+            pinctrl-1 = <&P8_08_o>;
+         };
+
+         P8_09_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_09_i>;
+            pinctrl-1 = <&P8_09_o>;
+         };
+
+         P8_10_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_10_i>;
+            pinctrl-1 = <&P8_10_o>;
+         };
+
+         P8_11_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_11_i>;
+            pinctrl-1 = <&P8_11_o>;
+         };
+
+         P8_12_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_12_i>;
+            pinctrl-1 = <&P8_12_o>;
+         };
+
+         P8_13_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_13_i>;
+            pinctrl-1 = <&P8_13_o>;
+         };
+
+         P8_14_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_14_i>;
+            pinctrl-1 = <&P8_14_o>;
+         };
+
+         P8_15_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_15_i>;
+            pinctrl-1 = <&P8_15_o>;
+         };
+
+         P8_16_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_16_i>;
+            pinctrl-1 = <&P8_16_o>;
+         };
+
+         P8_17_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_17_i>;
+            pinctrl-1 = <&P8_17_o>;
+         };
+
+         P8_18_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_18_i>;
+            pinctrl-1 = <&P8_18_o>;
+         };
+
+         P8_19_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_19_i>;
+            pinctrl-1 = <&P8_19_o>;
+         };
+
+         P8_26_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_26_i>;
+            pinctrl-1 = <&P8_26_o>;
+         };
+
+         // HDMI:
+         P8_27_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_27_i>;
+            pinctrl-1 = <&P8_27_o>;
+         };
+
+         P8_28_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_28_i>;
+            pinctrl-1 = <&P8_28_o>;
+         };
+
+         P8_29_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_29_i>;
+            pinctrl-1 = <&P8_29_o>;
+         };
+
+         P8_30_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_30_i>;
+            pinctrl-1 = <&P8_30_o>;
+         };
+
+         P8_31_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_31_i>;
+            pinctrl-1 = <&P8_31_o>;
+         };
+
+         P8_32_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_32_i>;
+            pinctrl-1 = <&P8_32_o>;
+         };
+
+         P8_33_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_33_i>;
+            pinctrl-1 = <&P8_33_o>;
+         };
+
+         P8_34_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_34_i>;
+            pinctrl-1 = <&P8_34_o>;
+         };
+
+         P8_35_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_35_i>;
+            pinctrl-1 = <&P8_35_o>;
+         };
+
+         P8_36_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_36_i>;
+            pinctrl-1 = <&P8_36_o>;
+         };
+
+         P8_37_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_37_i>;
+            pinctrl-1 = <&P8_37_o>;
+         };
+
+         P8_38_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_38_i>;
+            pinctrl-1 = <&P8_38_o>;
+         };
+
+         P8_39_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_39_i>;
+            pinctrl-1 = <&P8_39_o>;
+         };
+
+         P8_40_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_40_i>;
+            pinctrl-1 = <&P8_40_o>;
+         };
+
+         P8_41_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_41_i>;
+            pinctrl-1 = <&P8_41_o>;
+         };
+
+         P8_42_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_42_i>;
+            pinctrl-1 = <&P8_42_o>;
+         };
+
+         P8_43_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_43_i>;
+            pinctrl-1 = <&P8_43_o>;
+         };
+
+         P8_44_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_44_i>;
+            pinctrl-1 = <&P8_44_o>;
+         };
+
+         P8_45_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_45_i>;
+            pinctrl-1 = <&P8_45_o>;
+         };
+
+         P8_46_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P8_46_i>;
+            pinctrl-1 = <&P8_46_o>;
+         };
+
+
+         /* P9_11_mux { */
+         /*    compatible = "bone-pinmux-helper"; */
+         /*    status = "okay"; */
+         /*    pinctrl-names = "input", "output"; */
+         /*    pinctrl-0 = <&P9_11_i>; */
+         /*    pinctrl-1 = <&P9_11_o>; */
+         /* }; */
+
+         P9_12_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P9_12_i>;
+            pinctrl-1 = <&P9_12_o>;
+         };
+
+         /* P9_13_mux { */
+         /*    compatible = "bone-pinmux-helper"; */
+         /*    status = "okay"; */
+         /*    pinctrl-names = "input", "output"; */
+         /*    pinctrl-0 = <&P9_13_i>; */
+         /*    pinctrl-1 = <&P9_13_o>; */
+         /* }; */
+
+         P9_14_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P9_14_i>;
+            pinctrl-1 = <&P9_14_o>;
+         };
+
+         P9_15_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P9_15_i>;
+            pinctrl-1 = <&P9_15_o>;
+         };
+
+         P9_16_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P9_16_i>;
+            pinctrl-1 = <&P9_16_o>;
+         };
+
+         // P9_17_mux {
+         //    compatible = "bone-pinmux-helper";
+         //    status = "okay";
+         //    pinctrl-names = "input", "output";
+         //    pinctrl-0 = <&P9_17_i>;
+         //    pinctrl-1 = <&P9_17_o>;
+         // };
+         //
+         // P9_18_mux {
+         //    compatible = "bone-pinmux-helper";
+         //    status = "okay";
+         //    pinctrl-names = "input", "output";
+         //    pinctrl-0 = <&P9_18_i>;
+         //    pinctrl-1 = <&P9_18_o>;
+         // };
+
+         P9_21_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P9_21_i>;
+            pinctrl-1 = <&P9_21_o>;
+         };
+
+         P9_22_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P9_22_i>;
+            pinctrl-1 = <&P9_22_o>;
+         };
+
+         P9_23_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P9_23_i>;
+            pinctrl-1 = <&P9_23_o>;
+         };
+
+         P9_24_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P9_24_i>;
+            pinctrl-1 = <&P9_24_o>;
+         };
+
+         P9_26_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P9_26_i>;
+            pinctrl-1 = <&P9_26_o>;
+         };
+
+         P9_27_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P9_27_i>;
+            pinctrl-1 = <&P9_27_o>;
+         };
+
+         P9_30_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P9_30_i>;
+            pinctrl-1 = <&P9_30_o>;
+         };
+
+         P9_41A_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P9_41A_i>;
+            pinctrl-1 = <&P9_41A_o>;
+         };
+
+         P9_41B_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P9_41B_i>;
+            pinctrl-1 = <&P9_41B_o>;
+         };
+
+         P9_42A_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P9_42A_i>;
+            pinctrl-1 = <&P9_42A_o>;
+         };
+
+         P9_42B_mux {
+            compatible = "bone-pinmux-helper";
+            status = "okay";
+            pinctrl-names = "input", "output";
+            pinctrl-0 = <&P9_42B_i>;
+            pinctrl-1 = <&P9_42B_o>;
+         };
+      };
+   };
+};

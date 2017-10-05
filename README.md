@@ -1,16 +1,23 @@
 #BBB-PRU
 
-This is an example program to figure out how to program the PRU units in the Beagle Bone Black.
+These are some example programs to figure out how to program the PRU units in the Beagle Bone (Black/Green).
 
+Forked from [rvega/bbb-pru](https://github.com/rvega/bbb-pru)
 
+The original code is no longer maintained and suggests [this
+repo](https://github.com/outer-space-sounds/beaglebone-pruio/) is more
+up-to-date and probably more useful. However, that one is also not actively
+maintainedi, the ADC inputs are sampled at 1500 samples per second and it
+includes things I don't need. I pulled in the library, though and intend to
+adapt it for my needs. Also pulled in the device-tree overlay.
 
-**DEPRECATION NOTICE:** The code in [this repo](https://github.com/outer-space-sounds/beaglebone-pruio/) is more up-to-date and probably more useful.
 
 ## 3rd party tools that are needed.
 
-The vendors/am335x_pru_package directory includes a driver and assembler that can be used to generate and load binaries to be ran on the PRUs. The vendors/install.sh script takes care of compiling and installing it.
+The following packages need to be installed:
 
-The vendors/pru_2.0.0B2 directory should contain the C compiler for generating binaries to run in the PRU. However TI's licence prevents redistribution of it so you have to manually download it from [here](http://software-dl.ti.com/codegen/non-esd/downloads/beta.htm) and run the installer script. This will generate a pru_2.0.0B2 directory which you'll have to move into vendors/pru_2.0.0B2. vendors/install.sh copies some files from here to system-wide directories for convenience.
+    am335x-pru-package
+    ti-pru-cgt-installer
 
 ## Writing PRU assembly code.
 
@@ -23,9 +30,9 @@ Look at the app-c example.
 ## ADC example 
 
 I have adjusted the adc example to fit my needs, namely to sample two channels
-as fast as possible. With the current code, I get a sampling rate just shy of
-1600 kS/s (or 800 kS/s per channel), which is pretty close to the theoretical
-maximum of about 1.6 MS/s in continous mode for two channels. 
+as fast as possible. With the current code, I get a sampling rate of 1600 kS/s
+(or 800 kS/s per channel), the theoretical maximum in continous mode for two
+channels. 
 
 See: [stack
 overflow](https://stackoverflow.com/questions/31076486/frequency-sampling-limit-for-beaglebone-adc)
@@ -53,16 +60,6 @@ https://github.com/VegetableAvenger/BBBIOlib
 http://processors.wiki.ti.com/index.php/PRU_Assembly_Instructions   
 http://processors.wiki.ti.com/index.php/PRU_Assembly_Reference_Guide   
 [AM335x SitaraTM Processors Technical Reference Manual](http://www.ti.com/lit/ug/spruh73k/spruh73k.pdf)   
-
-
-## Objectives
-
-1. How to compile and run assembly code for the PRU?  [DONE]
-2. How to communicate between a host application (linux app) and the code running in the PRU? Interrupt based, please. [DONE]
-3. How to do all of this stuff in C instead of assembly?  [DONE]
-4. How to use GPIOs? [DONE]
-5. ADCs? 
-5. Hardware Timers?
 
 ## License
 
